@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>朝阳三日深度文化之旅</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #8B4513;
+            --secondary-color: #D2691E;
+            --accent-color: #CD853F;
+            --light-color: #FFF8DC;
+            --dark-color: #5D4037;
+            --shadow-light: 0 2px 10px rgba(0,0,0,0.1);
+            --shadow-medium: 0 4px 20px rgba(0,0,0,0.15);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+            background-color: #f8f5f0;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* 加载动画 */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--light-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--accent-color);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 返回顶部按钮 */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            z-index: 1000;
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover {
+            background: var(--dark-color);
+            transform: translateY(-3px);
+        }
+        
+        /* 导航栏 */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-light);
+            transition: var(--transition);
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            color: var(--primary-color) !important;
+        }
+        
+        .nav-link {
+            color: var(--dark-color) !important;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+        
+        .header {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('images/header-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            position: relative;
+            padding-bottom: 15px;
+            margin: 40px 0 30px;
+            color: var(--dark-color);
+            border-bottom: 3px solid var(--accent-color);
+        }
+        
+        .section-title:after {
+            content: "";
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100px;
+            height: 3px;
+            background: var(--primary-color);
+        }
+        
+        .day-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow-medium);
+            transition: var(--transition);
+            margin-bottom: 30px;
+        }
+        
+        .day-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        }
+        
+        .day-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+        }
+        
+        .attraction-card {
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            background: white;
+        }
+        
+        .attraction-card img {
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        
+        .attraction-card:hover img {
+            transform: scale(1.03);
+        }
+        
+        .attraction-content {
+            padding: 20px;
+        }
+        
+        .restaurant-card {
+            border-left: 4px solid var(--accent-color);
+            background: #fffcf5;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .restaurant-card img {
+            border-radius: 8px;
+            margin-bottom: 15px;
+            max-height: 200px;
+            object-fit: cover;
+        }
+        
+        .info-box {
+            background: #f9f4e9;
+            border-left: 4px solid var(--secondary-color);
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .tip-box {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #4a9fc6;
+        }
+        
+        .timeline {
+            position: relative;
+            padding: 30px 0;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--accent-color);
+            left: 50%;
+            margin-left: -2px;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+            overflow: hidden; /* 清除浮动 */
+        }
+        
+        .timeline-item::after {
+            content: '';
+            display: table;
+            clear: both;
+        }
+        
+        .timeline-content {
+            width: 45%;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .timeline-item:nth-child(odd) .timeline-content {
+            float: left;
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .timeline-item:nth-child(even) .timeline-content {
+            float: right;
+            border-right: 3px solid var(--primary-color);
+        }
+        
+        .timeline-content::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 24px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px var(--accent-color);
+        }
+        
+        .timeline-item:nth-child(odd) .timeline-content::after {
+            right: -52px;
+        }
+        
+        .timeline-item:nth-child(even) .timeline-content::after {
+            left: -52px;
+        }
+        
+        .map-container {
+            height: 400px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 30px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 50px;
+        }
+        
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            background: var(--accent-color);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            transition: var(--transition);
+            box-shadow: var(--shadow-light);
+        }
+        
+        .tag:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        .tag i {
+            margin-right: 4px;
+        }
+        
+        /* 图片优化 */
+        .img-fluid {
+            transition: var(--transition);
+            border-radius: 10px;
+        }
+        
+        .img-fluid:hover {
+            transform: scale(1.05);
+        }
+        
+        /* 美化占位图 */
+        .image-placeholder {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border-radius: 10px;
+            min-height: 250px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        
+        .image-placeholder::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .image-content {
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+        }
+        
+        .image-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.9;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .image-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .image-desc {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        /* 信息框优化 */
+        .info-box, .tip-box {
+            background: linear-gradient(135deg, var(--light-color), #f0f0f0);
+            border-left: 4px solid var(--primary-color);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: var(--shadow-light);
+            transition: var(--transition);
+        }
+        
+        .info-box:hover, .tip-box:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-medium);
+        }
+        
+        /* 餐厅卡片优化 */
+        .restaurant-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            box-shadow: var(--shadow-medium);
+            border: 1px solid #e0e0e0;
+            transition: var(--transition);
+        }
+        
+        .restaurant-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        @media (max-width: 768px) {
+            .timeline::before {
+                left: 30px;
+            }
+            
+            .timeline-content {
+                width: calc(100% - 80px);
+                float: right !important;
+                margin-left: 80px;
+                border-left: 3px solid var(--primary-color) !important;
+                border-right: none !important;
+            }
+            
+            .timeline-item:nth-child(odd) .timeline-content::after,
+            .timeline-item:nth-child(even) .timeline-content::after {
+                left: -52px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载动画 -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fas fa-mountain me-2"></i>朝阳文化之旅</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#background">历史背景</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#day1">第一天</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#day2">第二天</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#day3">第三天</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tips">实用贴士</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 头部 -->
+    <header class="header" id="home">
+        <div class="container">
+            <h1 class="display-3 fw-bold">朝阳三日深度文化之旅</h1>
+            <p class="lead">探索5000年红山文化，追寻中华文明起源</p>
+            <div class="mt-4">
+                <span class="badge bg-light text-dark fs-6 me-2">红山文化</span>
+                <span class="badge bg-light text-dark fs-6 me-2">化石王国</span>
+                <span class="badge bg-light text-dark fs-6 me-2">三燕古都</span>
+                <span class="badge bg-light text-dark fs-6">佛教艺术</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- 历史文化背景 -->
+        <section class="mb-5" id="background">
+            <h2 class="section-title"><i class="fas fa-landmark me-3"></i>朝阳历史文化背景</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="fs-5">朝阳，古称"龙城"，是中华文明的重要发源地之一。这里有着5000年的红山文化、1700年的三燕古都历史，被誉为"世界上第一朵花绽放的地方"和"第一只鸟飞起的地方"。</p>
+                    <p>从新石器时代的红山文化到辽代的佛教艺术，朝阳见证了中华文明的连续发展。作为连接东北与中原的文化枢纽，朝阳融合了多民族的历史与文化，形成了独特的"龙城文化"。</p>
+                </div>
+                <div class="col-md-6">
+                    <div class="info-box">
+                        <h4><i class="fas fa-lightbulb me-2"></i>文化亮点</h4>
+                        <ul>
+                            <li>红山文化核心区域，发现中国最早的女神庙</li>
+                            <li>三燕王朝（前燕、后燕、北燕）都城所在地</li>
+                            <li>世界级古生物化石宝库</li>
+                            <li>辽代佛教艺术中心，拥有多座千年古塔</li>
+                            <li>东北特色美食聚集地</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第一天行程 -->
+        <section class="mb-5" id="day1">
+            <div class="day-card">
+                <div class="day-header">
+                    <h2><i class="fas fa-sun me-2"></i>D1｜红山寻根·古城烟火</h2>
+                </div>
+                <div class="p-4">
+                    <!-- 牛河梁遗址 -->
+                    <div class="row mb-4">
+                        <div class="col-lg-5 mb-4 mb-lg-0">
+                            <img src="images/attractions/niuheliang-site.jpg" alt="牛河梁遗址公园" class="img-fluid rounded" loading="lazy" onerror="this.src='https://via.placeholder.com/1200x800/8B4513/FFFFFF?text=牛河梁遗址公园'">
+                        </div>
+                        <div class="col-lg-7">
+                            <h3 class="mb-3"><i class="fas fa-archway me-2"></i>牛河梁遗址公园</h3>
+                            <div class="mb-3">
+                                <span class="tag"><i class="fas fa-clock me-1"></i>07:00-13:00</span>
+                                <span class="tag"><i class="fas fa-ticket-alt me-1"></i>80元/人</span>
+                                <span class="tag"><i class="fas fa-map-marker-alt me-1"></i>凌源市与建平县交界处</span>
+                            </div>
+                            <p><strong>历史背景：</strong>牛河梁遗址是红山文化的核心遗址，距今约5000-5500年，被誉为"中华文明的曙光"。这里发现了中国最早的女神庙、祭坛和积石冢群，证明了中华文明"多元一体"的起源模式。</p>
+                            <div class="tip-box">
+                                <h5><i class="fas fa-lightbulb me-2"></i>实用贴士</h5>
+                                <ul class="mb-0">
+                                    <li>提前关注"牛河梁遗址"公众号预约门票</li>
+                                    <li>观光车10元/人，建议购买，遗址区域较大</li>
+                                    <li>夏季防晒必备，遗址区域遮挡较少</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 午餐 -->
+                    <h4 class="mt-5 mb-3"><i class="fas fa-utensils me-2"></i>午餐时光：地道朝阳味道</h4>
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="restaurant-card">
+                                <img src="images/restaurants/lanzhou-noodles.jpg" alt="拜记兰州牛肉面" class="img-fluid" loading="lazy" onerror="this.src='https://via.placeholder.com/1200x800/D2691E/FFFFFF?text=拜记兰州牛肉面'">
+                                <h5>拜记兰州牛肉面</h5>
+                                <p><i class="fas fa-map-marker-alt me-2"></i>双塔区珠江路三段</p>
+                                <p><strong>招牌特色：</strong>正宗兰州拉面工艺，汤头清鲜甘甜，面条劲道爽滑</p>
+                                <p><strong>推荐：</strong>牛肉面+辣油+糖蒜</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="restaurant-card">
+                                <img src="images/restaurants/ban-noodles.jpg" alt="孙记板面" class="img-fluid" loading="lazy" onerror="this.src='https://via.placeholder.com/1200x800/CD853F/FFFFFF?text=孙记板面'">
+                                <h5>孙记板面</h5>
+                                <p><i class="fas fa-map-marker-alt me-2"></i>慕容街西口</p>
+                                <p><strong>特色介绍：</strong>皖北风味板面，粗面条配卤蛋豆干，口感丰富</p>
+                                <p><strong>经典搭配：</strong>板面+卤蛋+豆干+咸菜</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 其他行程 -->
+                    <div class="row mt-4">
+                        <div class="col-md-4 mb-4">
+                            <div class="attraction-card">
+                                <img src="images/hotels/magnolia-hotel.jpg" alt="白玉兰酒店" class="img-fluid" loading="lazy" onerror="this.src='https://via.placeholder.com/1200x800/9370DB/FFFFFF?text=白玉兰酒店'">
+                                <div class="attraction-content">
+                                    <h5>入住休整：白玉兰酒店</h5>
+                                    <p class="mb-1"><i class="fas fa-map-marker-alt me-2"></i>朝阳大街一段292号</p>
+                                    <p class="mb-0"><i class="fas fa-star me-2"></i>四星级商务酒店</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8 mb-4">
+                            <div class="restaurant-card">
+                                <h4><i class="fas fa-dinner me-2"></i>晚餐：老太太砂锅居</h4>
+                                <p><i class="fas fa-map-marker-alt me-2"></i>双塔区光明街34号</p>
+                                <p><strong>朝阳麻辣烫文化：</strong>朝阳麻辣烫有别于四川麻辣烫，更注重"黏糊"口感，汤底浓稠，麻酱香浓。</p>
+                                <p><strong>必点组合：</strong></p>
+                                <ul>
+                                    <li><strong>主食：</strong>玉米面+牛筋面双拼</li>
+                                    <li><strong>调料：</strong>麻酱蒜泥加倍</li>
+                                    <li><strong>配菜：</strong>炸甘蓝串、冻豆腐、宽粉、午餐肉</li>
+                                    <li><strong>特色：</strong>炸土豆片（吸饱麻酱，外酥内糯）</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 第二天行程 -->
+        <section class="mb-5" id="day2">
+            <div class="day-card">
+                <div class="day-header">
+                    <h2><i class="fas fa-sun me-2"></i>D2｜化石王国·古都穿越</h2>
+                </div>
+                <div class="p-4">
+                    <!-- 鸟化石国家地质公园 -->
+                    <div class="row mb-4">
+                        <div class="col-lg-5 mb-4 mb-lg-0">
+                            <img src="images/attractions/fossil-park.jpg" alt="鸟化石国家地质公园" class="img-fluid rounded" loading="lazy" onerror="this.src='https://via.placeholder.com/1200x800/2E8B57/FFFFFF?text=鸟化石地质公园'">
+                        </div>
+                        <div class="col-lg-7">
+                            <h3 class="mb-3"><i class="fas fa-mountain me-2"></i>鸟化石国家地质公园</h3>
+                            <div class="mb-3">
+                                <span class="tag"><i class="fas fa-clock me-1"></i>08:30-12:00</span>
+                                <span class="tag"><i class="fas fa-ticket-alt me-1"></i>80元/人</span>
+                                <span class="tag"><i class="fas fa-map-marker-alt me-1"></i>龙城区大平房镇</span>
+                                <button class="tag" onclick="showMap('鸟化石国家地质公园', '41.5731, 120.4586')">
+                                    <i class="fas fa-map me-1"></i>查看地图
+                                </button>
+                            </div>
+                            <p><strong>地质背景：</strong>朝阳是世界著名的"古生物化石宝库"，拥有距今1.2-1.6亿年的热河生物群化石。这里发现了世界上第一只鸟、第一朵花的化石，被国际古生物学界誉为"20世纪最重要的科学发现之一"。</p>
+                            
+                            <h5 class="mt-4">重要发现</h5>
+                            <ul>
+                                <li><strong>中华龙鸟：</strong>世界首例带羽毛恐龙，证明鸟类起源于恐龙</li>
+                                <li><strong>辽宁古果：</strong>世界最早的被子植物，改写植物进化史</li>
+                                <li><strong>孔子鸟：</strong>最原始的鸟类，填补恐龙与鸟类进化空白</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- 游览攻略时间轴 -->
+                    <h4 class="mt-5 mb-3"><i class="fas fa-route me-2"></i>游览攻略（3.5小时）</h4>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <h5><i class="fas fa-university me-2"></i>古生物博物馆（09:00-10:30）</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6>🦴 1号厅-恐龙世界</h6>
+                                        <ul>
+                                            <li>中华龙鸟化石（羽毛印痕清晰可见）</li>
+                                            <li>辽宁龙、北票龙等完整骨架</li>
+                                            <li>互动体验：恐龙复活AR展示</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6>🌸 5号厅-植物王国</h6>
+                                        <ul>
+                                            <li>辽宁古果（荧光展台下观察花朵结构）</li>
+                                            <li>中华古果、十字里海果等珍稀标本</li>
+                                            <li>植物进化时间轴展示</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <h5><i class="fas fa-road me-2"></i>地质长廊（10:30-11:00）</h5>
+                                <ul>
+                                    <li><strong>地层剖面：</strong>1.2亿年地质历史一览无余</li>
+                                    <li><strong>恐龙足迹：</strong>玻璃栈道下方保存完整的恐龙行走轨迹</li>
+                                    <li><strong>化石挖掘体验：</strong>模拟考古现场，亲手"发现"化石</li>
+                                    <li><strong>拍摄要点：</strong>中段观景台可拍摄整个化石层全貌</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <h5><i class="fas fa-tree me-2"></i>木化石林（11:00-11:40）</h5>
+                                <ul>
+                                    <li><strong>硅化木群：</strong>1.5亿年前的古森林遗迹</li>
+                                    <li><strong>G-07树王：</strong>直径1.2米，年轮密集，保存最完整</li>
+                                    <li><strong>触摸体验：</strong>指定区域可触摸感受石化木质纹理</li>
+                                    <li><strong>科普价值：</strong>了解古气候变化和森林演替过程</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+
+                    <!-- 午餐 -->
+                    <h4 class="mt-5 mb-3"><i class="fas fa-utensils me-2"></i>午餐：东北特色美食</h4>
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="restaurant-card">
+                                <h5><i class="fas fa-utensils me-2"></i>津阳蒸饺（龙山街店）</h5>
+                                <p><i class="fas fa-map-marker-alt me-2"></i>龙山街与新华路交叉口</p>
+                                <p><i class="fas fa-phone me-2"></i>0421-2817777</p>
+                                <p><strong>招牌特色：</strong>手工现包蒸饺，皮薄馅大，汁水丰富</p>
+                                <p><strong>必点组合：</strong>排骨蒸饺3笼+酸辣汤+凉拌黄瓜</p>
+                                <p><strong>人均：</strong>30-40元</p>
+                                <button class="btn btn-outline-primary btn-sm" onclick="showMap('津阳蒸饺', '41.5731, 120.4586')">
+                                    <i class="fas fa-map me-1"></i>查看位置
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="restaurant-card">
+                                <h5><i class="fas fa-utensils me-2"></i>白家特味大盘菜</h5>
+                                <p><i class="fas fa-map-marker-alt me-2"></i>新华路中段（近朝阳剧院）</p>
+                                <p><strong>东北特色：</strong>排骨焖卷子配酸菜白肉，分量超大</p>
+                                <p><strong>经典搭配：</strong>大盘菜+手擀面+东北酸菜</p>
+                                <p><strong>人均：</strong>25-35元，适合2-3人分享</p>
+                                <button class="btn btn-outline-primary btn-sm" onclick="showMap('白家特味大盘菜', '41.5731, 120.4586')">
+                                    <i class="fas fa-map me-1"></i>查看位置
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 古城区步行环线 -->
+                    <h4 class="mt-5 mb-3"><i class="fas fa-walking me-2"></i>古城区文化步行环线（14:00-17:00）</h4>
+                    <div class="info-box">
+                        <p><strong>路线概览：</strong>朝阳古城区保存了从十六国时期到清代的丰富文化遗存，步行环线全长约2.5公里，涵盖佛教、道教、民俗文化精华。</p>
+                    </div>
+
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <h5><i class="fas fa-pagoda me-2"></i>北塔+博物馆（14:00-15:15）</h5>
+                                <div class="mb-3">
+                                    <span class="tag"><i class="fas fa-ticket-alt me-1"></i>联票50元</span>
+                                    <button class="tag" onclick="showMap('朝阳北塔', '41.5731, 120.4586')">
+                                        <i class="fas fa-map me-1"></i>查看地图
+                                    </button>
+                                </div>
+                                <p><strong>历史地位：</strong>东北地区最古老的佛塔，始建于北魏，辽代重修</p>
+                                <ul>
+                                    <li><strong>建筑特色：</strong>十三层密檐式砖塔，高42.6米，辽代建筑典范</li>
+                                    <li><strong>砖雕艺术：</strong>西北角佛像雕刻最完整，面部表情生动</li>
+                                    <li><strong>佛教文物：</strong>塔内发现舍利、经卷等珍贵文物</li>
+                                    <li><strong>博物馆珍品：</strong>波斯瓶、七宝塔、辽代经卷</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <h5><i class="fas fa-store me-2"></i>慕容街文化市集（15:15-15:40）</h5>
+                                <p><strong>慕容街历史：</strong>得名于十六国时期的慕容鲜卑，是朝阳古城的文化商业中心。</p>
+                                <div class="tip-box">
+                                    <h6><i class="fas fa-gem me-2"></i>化石淘宝攻略</h6>
+                                    <ul>
+                                        <li>认准"政府特许经营"标牌，确保化石来源合法</li>
+                                        <li>推荐商铺：龙城奇石店（信誉好，可砍价）</li>
+                                        <li>热门品种：狼鳍鱼化石、昆虫化石、植物化石</li>
+                                        <li>价格参考：小型鱼化石50-100元，可砍价至6-7折</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <h5><i class="fas fa-temple me-2"></i>关帝庙（15:40-16:10）</h5>
+                                <p><strong>建筑背景：</strong>始建于清康熙年间，是东北地区保存较完整的关帝庙建筑群。</p>
+                                <ul>
+                                    <li><strong>琉璃望天犼：</strong>东侧金爪款，工艺精湛，寓意镇邪护法</li>
+                                    <li><strong>清代铁钟：</strong>西院悬挂，重达千斤，音质浑厚</li>
+                                    <li><strong>彩绘壁画：</strong>大殿内关羽生平故事画，色彩保存完好</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <h5><i class="fas fa-place-of-worship me-2"></i>佑顺寺（16:10-17:00）</h5>
+                                <p><strong>寺院历史：</strong>建于清乾隆年间，是朝阳地区重要的藏传佛教寺院。</p>
+                                <ul>
+                                    <li><strong>藏经阁：</strong>珍藏汉、满、蒙、藏四体文字经书</li>
+                                    <li><strong>四体匾额：</strong>满文位于右二列，展现清代多民族文化特色</li>
+                                    <li><strong>经幡飘扬：</strong>五色经幡随风飘动，寓意吉祥如意</li>
+                                    <li><strong>黄昏美景：</strong>17:00夕阳西下，光线穿透经幡形成绝美光影</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+
+                    <!-- 晚餐 -->
+                    <div class="restaurant-card mt-5">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <img src="images/restaurants/taizi-hotpot.jpg" alt="徐师傅太子锅" class="img-fluid rounded" loading="lazy" onerror="this.src='https://via.placeholder.com/1200x800/DC143C/FFFFFF?text=徐师傅太子锅'">
+                            </div>
+                            <div class="col-md-8">
+                                <h4><i class="fas fa-fire me-2"></i>晚餐：徐师傅太子锅（18:30-20:00）</h4>
+                                <p><i class="fas fa-map-marker-alt me-2"></i>双塔区文化路五中旁</p>
+                                <p><strong>太子锅文化：</strong>太子锅是朝阳特色火锅，以酱香浓郁、锅底厚重著称。相传源于清代宫廷御膳，后传入民间。</p>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6>🍯 点单攻略</h6>
+                                        <ul>
+                                            <li><strong>主锅：</strong>酱香牛蛙锅（要求"焦边"处理）</li>
+                                            <li><strong>涮菜拼盘：</strong>酸菜必选+冻豆腐+宽粉</li>
+                                            <li><strong>主食：</strong>奶油玉米饼</li>
+                                            <li><strong>饮品：</strong>东北大绿棒子或哈尔滨啤酒</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6>🅿️ 停车指南</h6>
+                                        <ul>
+                                            <li>店前免费车位较少（仅3-4个）</li>
+                                            <li>推荐：对面中国银行停车场（5元/小时）</li>
+                                            <li>备选：文化路路边收费位（3元/小时）</li>
+                                        </ul>
+                                        <p><strong>人均：</strong>60-80元</p>
+                                    </div>
+                                </div>
+                                <button class="btn btn-outline-primary btn-sm" onclick="showMap('徐师傅太子锅', '41.5731, 120.4586')">
+                                    <i class="fas fa-map me-1"></i>查看位置
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第三天行程 -->
+        <section class="mb-5" id="day3">
+            <div class="day-card">
+                <div class="day-header">
+                    <h2><i class="fas fa-sun me-2"></i>D3｜博物收官·味蕾告别</h2>
+                </div>
+                <div class="p-4">
+                    <!-- 博物馆 -->
+                    <div class="row mb-4">
+                        <div class="col-lg-5 mb-4 mb-lg-0">
+                            <img src="images/attractions/chaoyang-museum.jpg" alt="朝阳博物馆" class="img-fluid rounded" loading="lazy" onerror="this.src='https://via.placeholder.com/1200x800/4682B4/FFFFFF?text=朝阳博物馆'">
+                        </div>
+                        <div class="col-lg-7">
+                            <h3 class="mb-3"><i class="fas fa-university me-2"></i>朝阳博物馆</h3>
+                            <div class="mb-3">
+                                <span class="tag"><i class="fas fa-clock me-1"></i>09:00-11:00</span>
+                                <span class="tag"><i class="fas fa-ticket-alt me-1"></i>免费</span>
+                                <span class="tag"><i class="fas fa-map-marker-alt me-1"></i>双塔区文化路二段</span>
+                            </div>
+                            <p><strong>博物馆背景：</strong>朝阳博物馆是国家二级博物馆，馆藏文物3万余件，以红山文化、三燕文化、辽代文物为特色，全面展示朝阳地区5000年文明史。</p>
+                            <h5 class="mt-4">必看展厅</h5>
+                            <ul>
+                                <li><strong>佛光普照厅：</strong>北魏贴金彩绘佛像、辽代佛塔模型</li>
+                                <li><strong>三燕乐舞厅：</strong>慕容鲜卑金步摇冠、鎏金马镫</li>
+                                <li><strong>红山文化厅：</strong>玉龙系列、彩陶文化</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- 午餐 -->
+                    <div class="restaurant-card">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <img src="images/restaurants/stewed-intestines.jpg" alt="小二楼炖肠" class="img-fluid rounded" loading="lazy" onerror="this.src='https://via.placeholder.com/1200x800/8B4513/FFFFFF?text=小二楼炖肠'">
+                            </div>
+                            <div class="col-md-8">
+                                <h4><i class="fas fa-utensils me-2"></i>午餐：小二楼炖肠</h4>
+                                <p><i class="fas fa-map-marker-alt me-2"></i>双塔区柳城路二段</p>
+                                <p><strong>东北炖肠文化：</strong>炖肠是东北地区传统名菜，以猪大肠为主料，配以土豆、豆腐等辅料慢炖而成。</p>
+                                <p><strong>招牌搭配：</strong></p>
+                                <ul>
+                                    <li><strong>主菜：</strong>炖肠（大肠处理极致，无腥味）</li>
+                                    <li><strong>主食：</strong>烤花卷（蘸汤汁食用）</li>
+                                    <li><strong>小菜：</strong>东北酸菜、拍黄瓜</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 返程 -->
+                    <div class="info-box mt-5">
+                        <h4><i class="fas fa-car me-2"></i>返程安排</h4>
+                        <p><strong>推荐路线：</strong>朝阳南高速口 → 京哈高速 → 山海关（全程约4小时）</p>
+                        <p><strong>沿途服务区：</strong></p>
+                        <ul>
+                            <li><strong>建平服务区：</strong>距朝阳1小时，可加油、休息</li>
+                            <li><strong>承德服务区：</strong>距朝阳2.5小时，餐饮、购物齐全</li>
+                            <li><strong>秦皇岛服务区：</strong>距山海关30分钟，最后补给点</li>
+                        </ul>
+                        <p class="mb-0"><strong>驾驶贴士：</strong>出发前检查油量，京哈高速车流量大，保持安全车距，预留30分钟机动时间。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>朝阳三日深度文化之旅</h4>
+                    <p>探索中华文明起源，感受千年古都魅力</p>
+                    <p>行程策划：文化旅行专家团队</p>
+                    <p>数据更新：2025年7月</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h5>实用APP推荐</h5>
+                    <p>高德地图、微信小程序、美图秀秀、大众点评</p>
+                    <div class="mt-3">
+                        <button class="btn btn-outline-light me-2"><i class="fas fa-download me-2"></i>下载行程PDF</button>
+                        <button class="btn btn-outline-light"><i class="fas fa-share-alt me-2"></i>分享行程</button>
+                    </div>
+                </div>
+            </div>
+            <hr class="mt-4 mb-4">
+            <div class="text-center">
+                <p class="mb-0">© 2025 朝阳文化深度游 | 探索中华文明的摇篮</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 返回顶部按钮 -->
+    <button class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- 地图模态框 -->
+    <div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="mapModalLabel">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        <span id="mapLocationName">景点位置</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="mapContainer" style="height: 400px; width: 100%;">
+                        <div class="d-flex justify-content-center align-items-center h-100">
+                            <div class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">加载中...</span>
+                                </div>
+                                <p class="mt-2">正在加载地图...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button class="btn btn-outline-primary w-100" onclick="openInBaiduMap()">
+                                    <i class="fas fa-external-link-alt me-2"></i>在百度地图中打开
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <button class="btn btn-outline-success w-100" onclick="openInGaodeMap()">
+                                    <i class="fas fa-external-link-alt me-2"></i>在高德地图中打开
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-6">
+                                <button class="btn btn-outline-info w-100" onclick="copyCoordinates()">
+                                    <i class="fas fa-copy me-2"></i>复制坐标
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <button class="btn btn-outline-warning w-100" onclick="shareLocation()">
+                                    <i class="fas fa-share me-2"></i>分享位置
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 实用贴士部分 -->
+    <section class="mb-5" id="tips">
+        <div class="container">
+            <h2 class="section-title"><i class="fas fa-lightbulb me-3"></i>实用贴士</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="info-box">
+                        <h4><i class="fas fa-car me-2"></i>交通贴士</h4>
+                        <ul>
+                            <li>建议自驾游，景点间距离较远</li>
+                            <li>提前下载离线地图</li>
+                            <li>注意高速公路限速</li>
+                            <li>各景点均有免费停车场</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="info-box">
+                        <h4><i class="fas fa-camera me-2"></i>拍摄建议</h4>
+                        <ul>
+                            <li>上午光线最佳，适合拍摄遗址</li>
+                            <li>黄昏时分拍摄古塔剪影</li>
+                            <li>准备充电宝，景区耗电量大</li>
+                            <li>化石拍摄需要微距镜头</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="info-box">
+                        <h4><i class="fas fa-wallet me-2"></i>费用预算</h4>
+                        <ul>
+                            <li>门票：约210元/人</li>
+                            <li>餐饮：300-400元/人</li>
+                            <li>住宿：200-300元/晚</li>
+                            <li>交通：500-800元（含油费）</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 地图总览 -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="info-box">
+                        <h4><i class="fas fa-route me-2"></i>景点分布地图</h4>
+                        <p>朝阳主要景点分布在市区及周边，建议按照地理位置合理安排行程路线。</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>🏛️ 市区景点</h6>
+                                <ul>
+                                    <li>朝阳北塔 - 市中心</li>
+                                    <li>朝阳博物馆 - 双塔区</li>
+                                    <li>慕容街 - 古城区</li>
+                                    <li>关帝庙、佑顺寺 - 古城区</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>🌄 郊区景点</h6>
+                                <ul>
+                                    <li>牛河梁遗址 - 凌源市（车程1.5小时）</li>
+                                    <li>鸟化石地质公园 - 龙城区（车程30分钟）</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary mt-3" onclick="showOverviewMap()">
+                            <i class="fas fa-map me-2"></i>查看景点分布总览
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 页面加载完成后隐藏加载动画
+        window.addEventListener('load', function() {
+            const loading = document.getElementById('loading');
+            if (loading) {
+                loading.classList.add('hidden');
+                setTimeout(() => {
+                    loading.style.display = 'none';
+                }, 500);
+            }
+        });
+
+        // 返回顶部按钮功能
+        const backToTop = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        });
+
+        backToTop.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (navbar) {
+                if (window.pageYOffset > 100) {
+                    navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+                } else {
+                    navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+                }
+            }
+        });
+
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offsetTop = target.offsetTop - 80;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // 添加页面滚动动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // 观察所有卡片元素
+        document.querySelectorAll('.day-card, .info-box, .restaurant-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // 美化占位图系统
+        const placeholderData = {
+            '牛河梁遗址公园': { icon: '🏛️', desc: '5000年红山文化圣地', color: 'linear-gradient(135deg, #8B4513, #D2691E)' },
+            '鸟化石地质公园': { icon: '🦕', desc: '世界级古生物化石宝库', color: 'linear-gradient(135deg, #2E8B57, #3CB371)' },
+            '朝阳博物馆': { icon: '🏛️', desc: '三燕文化展示中心', color: 'linear-gradient(135deg, #4682B4, #5F9EA0)' },
+            '拜记兰州牛肉面': { icon: '🍜', desc: '正宗兰州拉面工艺', color: 'linear-gradient(135deg, #D2691E, #FF7F50)' },
+            '孙记板面': { icon: '🍝', desc: '皖北风味板面', color: 'linear-gradient(135deg, #CD853F, #DEB887)' },
+            '徐师傅太子锅': { icon: '🍲', desc: '朝阳特色火锅', color: 'linear-gradient(135deg, #DC143C, #FF6347)' },
+            '小二楼炖肠': { icon: '🥘', desc: '东北传统名菜', color: 'linear-gradient(135deg, #8B4513, #A0522D)' },
+            '白玉兰酒店': { icon: '🏨', desc: '四星级商务酒店', color: 'linear-gradient(135deg, #9370DB, #BA55D3)' }
+        };
+
+        // 创建美化占位图
+        function createBeautifulPlaceholder(name) {
+            const data = placeholderData[name] || { icon: '📍', desc: '朝阳旅游景点', color: 'linear-gradient(135deg, #8B4513, #D2691E)' };
+            
+            return `
+                <div class="image-placeholder" style="background: ${data.color};">
+                    <div class="image-content">
+                        <div class="image-icon">${data.icon}</div>
+                        <div class="image-title">${name}</div>
+                        <div class="image-desc">${data.desc}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 替换所有图片为美化占位图
+        function enhancePlaceholders() {
+            document.querySelectorAll('img[onerror]').forEach(img => {
+                const altText = img.alt;
+                img.onerror = function() {
+                    const placeholder = createBeautifulPlaceholder(altText);
+                    this.outerHTML = placeholder;
+                };
+            });
+        }
+
+        // 页面加载完成后执行
+        window.addEventListener('load', enhancePlaceholders);
+
+        // 地图功能相关变量
+        let currentLocation = '';
+        let currentCoordinates = '';
+        
+        // 景点坐标数据
+        const locations = {
+            '牛河梁遗址公园': { coords: '41.2833, 119.4167', address: '朝阳市凌源市与建平县交界处' },
+            '鸟化石国家地质公园': { coords: '41.5731, 120.4586', address: '朝阳市龙城区大平房镇' },
+            '朝阳北塔': { coords: '41.5731, 120.4586', address: '朝阳市双塔区北塔街' },
+            '朝阳博物馆': { coords: '41.5731, 120.4586', address: '朝阳市双塔区文化路二段' },
+            '津阳蒸饺': { coords: '41.5731, 120.4586', address: '朝阳市龙山街与新华路交叉口' },
+            '白家特味大盘菜': { coords: '41.5731, 120.4586', address: '朝阳市新华路中段' },
+            '徐师傅太子锅': { coords: '41.5731, 120.4586', address: '朝阳市双塔区文化路五中旁' },
+            '老太太砂锅居': { coords: '41.5731, 120.4586', address: '朝阳市双塔区光明街34号' },
+            '拜记兰州牛肉面': { coords: '41.5731, 120.4586', address: '朝阳市双塔区珠江路三段' },
+            '白玉兰酒店': { coords: '41.5731, 120.4586', address: '朝阳市朝阳大街一段292号万达广场旁' }
+        };
+
+        // 显示地图模态框
+        function showMap(locationName, coordinates) {
+            currentLocation = locationName;
+            currentCoordinates = coordinates || locations[locationName]?.coords || '41.5731, 120.4586';
+            
+            document.getElementById('mapLocationName').textContent = locationName;
+            
+            // 显示模态框
+            const mapModal = new bootstrap.Modal(document.getElementById('mapModal'));
+            mapModal.show();
+            
+            // 加载地图
+            loadMap();
+        }
+
+        // 加载地图
+        function loadMap() {
+            const mapContainer = document.getElementById('mapContainer');
+            const [lat, lng] = currentCoordinates.split(', ');
+            
+            // 使用静态地图API显示地图
+            const mapImageUrl = `https://api.map.baidu.com/staticimage/v2?ak=YOUR_BAIDU_API_KEY&center=${lng},${lat}&width=568&height=400&zoom=15&markers=${lng},${lat}&markerStyles=l,A,0xff0000`;
+            
+            // 创建地图内容
+            mapContainer.innerHTML = `
+                <div class="position-relative">
+                    <div class="map-placeholder bg-light d-flex align-items-center justify-content-center" style="height: 400px; border-radius: 10px;">
+                        <div class="text-center">
+                            <i class="fas fa-map-marker-alt fa-3x text-primary mb-3"></i>
+                            <h5>${currentLocation}</h5>
+                            <p class="text-muted">坐标: ${currentCoordinates}</p>
+                            <p class="text-muted">${locations[currentLocation]?.address || '朝阳市'}</p>
+                            <div class="mt-3">
+                                <button class="btn btn-primary me-2" onclick="openInBaiduMap()">
+                                    <i class="fas fa-external-link-alt me-1"></i>百度地图
+                                </button>
+                                <button class="btn btn-success" onclick="openInGaodeMap()">
+                                    <i class="fas fa-external-link-alt me-1"></i>高德地图
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 在百度地图中打开
+        function openInBaiduMap() {
+            const [lat, lng] = currentCoordinates.split(', ');
+            const url = `https://api.map.baidu.com/marker?location=${lat},${lng}&title=${encodeURIComponent(currentLocation)}&content=${encodeURIComponent(locations[currentLocation]?.address || '')}&output=html&src=webapp.baidu.openAPIdemo`;
+            window.open(url, '_blank');
+        }
+
+        // 在高德地图中打开
+        function openInGaodeMap() {
+            const [lat, lng] = currentCoordinates.split(', ');
+            const url = `https://uri.amap.com/marker?position=${lng},${lat}&name=${encodeURIComponent(currentLocation)}&src=mypage&coordinate=gaode&callnative=0`;
+            window.open(url, '_blank');
+        }
+
+        // 复制坐标
+        function copyCoordinates() {
+            navigator.clipboard.writeText(currentCoordinates).then(() => {
+                // 显示复制成功提示
+                const toast = document.createElement('div');
+                toast.className = 'toast align-items-center text-white bg-success border-0 position-fixed';
+                toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999;';
+                toast.innerHTML = `
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="fas fa-check me-2"></i>坐标已复制到剪贴板
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                `;
+                document.body.appendChild(toast);
+                const bsToast = new bootstrap.Toast(toast);
+                bsToast.show();
+                
+                // 3秒后自动移除
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 3000);
+            }).catch(() => {
+                alert('复制失败，坐标为: ' + currentCoordinates);
+            });
+        }
+
+        // 分享位置
+        function shareLocation() {
+            const shareText = `${currentLocation} - 坐标: ${currentCoordinates}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: currentLocation,
+                    text: shareText,
+                    url: window.location.href
+                });
+            } else {
+                // 降级处理：复制分享文本
+                navigator.clipboard.writeText(shareText).then(() => {
+                    alert('位置信息已复制到剪贴板');
+                }).catch(() => {
+                    alert(shareText);
+                });
+            }
+        }
+
+        // 显示景点分布总览
+        function showOverviewMap() {
+            showMap('朝阳景点分布总览', '41.5731, 120.4586');
+            
+            // 自定义总览地图内容
+            setTimeout(() => {
+                const mapContainer = document.getElementById('mapContainer');
+                mapContainer.innerHTML = `
+                    <div class="position-relative">
+                        <div class="map-overview bg-light p-4" style="height: 400px; border-radius: 10px; overflow-y: auto;">
+                            <h5 class="text-center mb-4">
+                                <i class="fas fa-map me-2"></i>朝阳景点分布总览
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="text-primary">🏛️ 市区景点</h6>
+                                    <div class="list-group list-group-flush">
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            朝阳北塔
+                                            <button class="btn btn-sm btn-outline-primary" onclick="showMap('朝阳北塔')">定位</button>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            朝阳博物馆
+                                            <button class="btn btn-sm btn-outline-primary" onclick="showMap('朝阳博物馆')">定位</button>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            慕容街
+                                            <button class="btn btn-sm btn-outline-primary" onclick="showMap('朝阳北塔')">定位</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-success">🌄 郊区景点</h6>
+                                    <div class="list-group list-group-flush">
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            牛河梁遗址
+                                            <button class="btn btn-sm btn-outline-success" onclick="showMap('牛河梁遗址公园')">定位</button>
+                                        </div>
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            鸟化石地质公园
+                                            <button class="btn btn-sm btn-outline-success" onclick="showMap('鸟化石国家地质公园')">定位</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <h6 class="text-warning">🍽️ 推荐餐厅</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="list-group list-group-flush">
+                                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                津阳蒸饺
+                                                <button class="btn btn-sm btn-outline-warning" onclick="showMap('津阳蒸饺')">定位</button>
+                                            </div>
+                                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                徐师傅太子锅
+                                                <button class="btn btn-sm btn-outline-warning" onclick="showMap('徐师傅太子锅')">定位</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="list-group list-group-flush">
+                                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                老太太砂锅居
+                                                <button class="btn btn-sm btn-outline-warning" onclick="showMap('老太太砂锅居')">定位</button>
+                                            </div>
+                                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                拜记兰州牛肉面
+                                                <button class="btn btn-sm btn-outline-warning" onclick="showMap('拜记兰州牛肉面')">定位</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }, 100);
+        }
+    </script>
+</body>
+</html>
