@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片路径测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-item { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .test-image { max-width: 300px; height: 200px; object-fit: cover; border: 2px solid #ccc; }
+        .status { padding: 5px 10px; border-radius: 3px; font-weight: bold; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>朝阳旅游网站图片路径测试</h1>
+    
+    <div class="test-item">
+        <h3>头部背景图</h3>
+        <img src="images/header-bg.jpg" alt="头部背景图" class="test-image" onload="showStatus(this, true)" onerror="showStatus(this, false)">
+        <div class="status-container"></div>
+    </div>
+
+    <div class="test-item">
+        <h3>牛河梁遗址公园</h3>
+        <img src="images/attractions/niuheliang-site.jpg" alt="牛河梁遗址公园" class="test-image" onload="showStatus(this, true)" onerror="showStatus(this, false)">
+        <div class="status-container"></div>
+    </div>
+
+    <div class="test-item">
+        <h3>鸟化石地质公园</h3>
+        <img src="images/attractions/fossil-park.jpg" alt="鸟化石地质公园" class="test-image" onload="showStatus(this, true)" onerror="showStatus(this, false)">
+        <div class="status-container"></div>
+    </div>
+
+    <div class="test-item">
+        <h3>朝阳博物馆</h3>
+        <img src="images/attractions/chaoyang-museum.jpg" alt="朝阳博物馆" class="test-image" onload="showStatus(this, true)" onerror="showStatus(this, false)">
+        <div class="status-container"></div>
+    </div>
+
+    <div class="test-item">
+        <h3>拜记兰州牛肉面</h3>
+        <img src="images/restaurants/lanzhou-noodles.jpg" alt="拜记兰州牛肉面" class="test-image" onload="showStatus(this, true)" onerror="showStatus(this, false)">
+        <div class="status-container"></div>
+    </div>
+
+    <div class="test-item">
+        <h3>孙记板面</h3>
+        <img src="images/restaurants/ban-noodles.jpg" alt="孙记板面" class="test-image" onload="showStatus(this, true)" onerror="showStatus(this, false)">
+        <div class="status-container"></div>
+    </div>
+
+    <div class="test-item">
+        <h3>徐师傅太子锅</h3>
+        <img src="images/restaurants/taizi-hotpot.jpg" alt="徐师傅太子锅" class="test-image" onload="showStatus(this, true)" onerror="showStatus(this, false)">
+        <div class="status-container"></div>
+    </div>
+
+    <div class="test-item">
+        <h3>小二楼炖肠</h3>
+        <img src="images/restaurants/stewed-intestines.jpg" alt="小二楼炖肠" class="test-image" onload="showStatus(this, true)" onerror="showStatus(this, false)">
+        <div class="status-container"></div>
+    </div>
+
+    <div class="test-item">
+        <h3>白玉兰酒店</h3>
+        <img src="images/hotels/magnolia-hotel.jpg" alt="白玉兰酒店" class="test-image" onload="showStatus(this, true)" onerror="showStatus(this, false)">
+        <div class="status-container"></div>
+    </div>
+
+    <script>
+        function showStatus(img, success) {
+            const container = img.parentElement.querySelector('.status-container');
+            const status = document.createElement('div');
+            status.className = 'status ' + (success ? 'success' : 'error');
+            
+            if (success) {
+                status.textContent = '✅ 图片加载成功';
+            } else {
+                status.textContent = '❌ 图片加载失败 - 检查文件路径: ' + img.src;
+            }
+            
+            container.appendChild(status);
+        }
+
+        // 页面加载完成后显示总结
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                const successCount = document.querySelectorAll('.success').length;
+                const totalCount = document.querySelectorAll('.test-image').length;
+                
+                const summary = document.createElement('div');
+                summary.style.cssText = 'position: fixed; top: 10px; right: 10px; background: #fff; border: 2px solid #007bff; padding: 15px; border-radius: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);';
+                summary.innerHTML = `
+                    <h4>测试结果</h4>
+                    <p>成功加载: ${successCount}/${totalCount}</p>
+                    <p>失败数量: ${totalCount - successCount}</p>
+                `;
+                
+                document.body.appendChild(summary);
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
